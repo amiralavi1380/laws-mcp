@@ -179,4 +179,38 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if not 1 <= args.delay <= 15:
         parser.error("delay must be between 1 and 15 seconds")
-    raise SystemExit(run(args.mode, args.delay))
+    try:
+        raise SystemExit(run(args.mode, args.delay))
+    except Exception as exc:
+        # Fail closed: never claim that an index challenged by a security
+        # intermediary is a successful laws update.
+        previous = {}
+        if REPORT.exists():
+            try:
+                previous = json.loads(REPORT.read_text(encoding="utf-8"))
+            except (ValueError, OSError):
+                previous = {}
+        try:
+            count = len(json.loads(INDEX.read_text(encoding="utf-8")))
+        except (ValueError, OSError):
+            count = None
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        summary = {
+            "status": "failed",
+            "manual_trigger": True,
+            "mode": args.mode,
+            "attempted_at_utc": now,
+            "completed_at_utc": now,
+            "source": SOURCE,
+            "index_count_before_attempt": count,
+            "index_changed": False,
+            "texts_changed": 0,
+            "last_successful_full_refresh_utc": previous.get("last_successful_full_refresh_utc"),
+            "error": str(exc)[:400],
+            "note": "No existing archive data was overwritten. Source may be returning a security challenge.",
+            "disclaimer": "No legal freshness or current validity confirmed."
+        }
+        atomic_write(REPORT, json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
+        print("MANUAL_REFRESH_FAILED", summary["error"], file=sys.stderr, flush=True)
+        raise
+
