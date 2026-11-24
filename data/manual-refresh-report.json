@@ -1,0 +1,16 @@
+{
+  "status": "failed",
+  "manual_trigger": true,
+  "mode": "full",
+  "attempted_at_utc": "2026-11-24T07:55:44Z",
+  "completed_at_utc": "2026-11-24T07:56:18Z",
+  "source": "https://www.ekhtebar.ir/قوانین/",
+  "github_run_url": "https://github.com/amiralavi1380/laws-mcp/actions/runs/45351789330",
+  "index_count_before_attempt": 657,
+  "index_changed": false,
+  "texts_changed": 0,
+  "last_successful_full_refresh_utc": null,
+  "error": "GitHub-hosted runner received a browser/security challenge at /.wgchallenge/challenge.cgi; parsed index was invalid/suspiciously small.",
+  "note": "Source was not accessible to GitHub Actions. Existing archive data was not overwritten. Re-run only after access path is genuinely available.",
+  "disclaimer": "No current legal validity, amendments, repeal status, or updated completeness certified."
+}
